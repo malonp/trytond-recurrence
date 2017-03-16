@@ -1,0 +1,115 @@
+<?xml version="1.0"?>
+<!-- This file is part of Tryton.  The COPYRIGHT file at the top level of
+this repository contains the full copyright notices and license terms. -->
+<tryton>
+    <data>
+
+<!-- Icons -->
+        <record model="ir.ui.icon" id="date_calendar_icon">
+            <field name="name">datecalendar</field>
+            <field name="path">icons/calendar.svg</field>
+        </record>
+
+        <record model="ir.ui.icon" id="clock_icon">
+            <field name="name">clock</field>
+            <field name="path">icons/circular-clock-with-clockwise-arrow-around.svg</field>
+        </record>
+
+        <record model="ir.ui.icon" id="wheel_icon">
+            <field name="name">cogwheel</field>
+            <field name="path">icons/settings-cogwheel.svg</field>
+        </record>
+
+<!-- Form View -->
+        <record model="ir.ui.view" id="recurrence_view_form">
+            <field name="model">recurrence</field>
+            <field name="type">form</field>
+            <field name="name">recurrence_form</field>
+        </record>
+
+        <record model="ir.ui.view" id="recurrence_event_view_form">
+            <field name="model">recurrence.event</field>
+            <field name="type">form</field>
+            <field name="name">event_form</field>
+        </record>
+
+        <record model="ir.ui.view" id="recurrence_date_view_form">
+            <field name="model">recurrence.date</field>
+            <field name="type">form</field>
+            <field name="name">date_form</field>
+        </record>
+
+<!-- List View -->
+        <record model="ir.ui.view" id="recurrence_view_tree">
+            <field name="model">recurrence</field>
+            <field name="type">tree</field>
+            <field name="name">recurrence_tree</field>
+        </record>
+
+        <record model="ir.ui.view" id="recurrence_event_view_tree">
+            <field name="model">recurrence.event</field>
+            <field name="type">tree</field>
+            <field name="name">event_tree</field>
+        </record>
+
+        <record model="ir.ui.view" id="recurrence_date_view_tree">
+            <field name="model">recurrence.date</field>
+            <field name="type">tree</field>
+            <field name="name">date_tree</field>
+        </record>
+<!-- Actions -->
+        <record model="ir.action.act_window" id="act_recurrence">
+            <field name="name">Recurrences</field>
+            <field name="res_model">recurrence</field>
+        </record>
+        <record model="ir.action.act_window.view" id="act_recurrence_tree_view">
+            <field name="sequence" eval="10"/>
+            <field name="view" ref="recurrence_view_tree"/>
+            <field name="act_window" ref="act_recurrence"/>
+        </record>
+        <record model="ir.action.act_window.view" id="act_recurrence_form_view">
+            <field name="sequence" eval="20"/>
+            <field name="view" ref="recurrence_view_form"/>
+            <field name="act_window" ref="act_recurrence"/>
+        </record>
+
+        <record model="ir.action.act_window" id="act_recurrence_event">
+            <field name="name">Scheduled Actions</field>
+            <field name="res_model">recurrence.event</field>
+        </record>
+        <record model="ir.action.act_window.view" id="act_recurrence_event_tree_view">
+            <field name="sequence" eval="10"/>
+            <field name="view" ref="recurrence_event_view_tree"/>
+            <field name="act_window" ref="act_recurrence_event"/>
+        </record>
+        <record model="ir.action.act_window.view" id="act_recurrence_event_form_view">
+            <field name="sequence" eval="20"/>
+            <field name="view" ref="recurrence_event_view_form"/>
+            <field name="act_window" ref="act_recurrence_event"/>
+        </record>
+
+<!-- Initial Menu -->
+        <menuitem name="Recurrence" sequence="9" id="menu_recurrence" icon="datecalendar"/>
+
+        <menuitem parent="menu_recurrence" action="act_recurrence"
+            id="menu_recurrence_tree" sequence="0" icon="clock"/>
+
+        <menuitem parent="menu_recurrence" action="act_recurrence_event"
+            id="menu_revent_tree" sequence="10" icon="cogwheel"/>
+
+<!-- Triggers -->
+<!--    eval = pyson.PYSONEncoder().encode(Eval('self', {}).get('trigger_run', False))
+        result = pyson.PYSONDecoder(env).decode(eval) -->
+        <record model="ir.trigger" id="recurrence_event_trigger">
+            <field name="name">recurrence_event_on_time</field>
+            <field name="active">1</field>
+            <field name="model" search="[('model', '=', 'recurrence.event')]"/>
+            <field name="on_time">1</field>
+            <field name="condition">{"d": false, "k": "trigger_run", "__class__": "Get", "v": {"d": {}, "__class__": "Eval", "v": "self"}}</field>
+            <field name="limit_number">0</field>
+            <field name="action_model" search="[('model', '=', 'recurrence.event')]"/>
+            <field name="action_function">run</field>
+        </record>
+
+    </data>
+</tryton>

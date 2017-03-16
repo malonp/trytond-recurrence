@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!-- This file is part of Tryton.  The COPYRIGHT file at the top level of
+this repository contains the full copyright notices and license terms. -->
+<form string="Recurrence" col="4">
+    <label name="name"/>
+    <field name="name"/>
+    <label name="active"/>
+    <field name="active"/>
+
+    <label name="dtstart"/>
+    <field name="dtstart"/>
+    <label name="next_call"/>
+    <field name="next_call" readonly="1"/>
+
+    <group homogeneous="1" colspan="4" string="Delta Time" col="8" id="timedelta">
+        <label name="years"/>
+        <field name="years"/>
+
+        <label name="months"/>
+        <field name="months"/>
+
+        <label name="weeks"/>
+        <field name="weeks"/>
+
+        <label name="days"/>
+        <field name="days"/>
+
+        <label name="weekday"/>
+        <field name="weekday" xexpand="0" width="75"/>
+
+        <label name="leapdays"/>
+        <field name="leapdays"/>
+    </group>
+
+    <separator name="description" colspan="4"/>
+    <field name="description" colspan="4"/>
+</form>

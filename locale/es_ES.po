@@ -1,0 +1,324 @@
+# 
+msgid ""
+msgstr "Content-Type: text/plain; charset=utf-8\n"
+
+msgctxt "field:recurrence,active:"
+msgid "Active"
+msgstr "Activo"
+
+msgctxt "field:recurrence,days:"
+msgid "Days"
+msgstr "Días"
+
+msgctxt "field:recurrence,description:"
+msgid "Description"
+msgstr "Descripción"
+
+msgctxt "field:recurrence,dtstart:"
+msgid "Start"
+msgstr "Inicio"
+
+msgctxt "field:recurrence,events:"
+msgid "Events"
+msgstr "Acciones"
+
+msgctxt "field:recurrence,leapdays:"
+msgid "Leapdays"
+msgstr "Año Bisiesto"
+
+msgctxt "field:recurrence,months:"
+msgid "Months"
+msgstr "Meses"
+
+msgctxt "field:recurrence,name:"
+msgid "Name"
+msgstr "Nombre"
+
+msgctxt "field:recurrence,next_call:"
+msgid "Next Call"
+msgstr "Siguiente llamada"
+
+msgctxt "field:recurrence,weeks:"
+msgid "Weeks"
+msgstr "Semanas"
+
+msgctxt "field:recurrence,weekday:"
+msgid "Weekday"
+msgstr "Dia de la semana"
+
+msgctxt "field:recurrence,years:"
+msgid "Years"
+msgstr "Años"
+
+msgctxt "help:recurrence,weekday:"
+msgid ""
+"One of the weekday instances (MO, TU, etc) "
+"and an optional parameter N (positive or negative), "
+"specifying the Nth weekday like MO(-2)."
+" You can also use an integer where 0=MO"
+msgstr ""
+"Inicacion del dia de la semana (MO, TU, etc) "
+"y un entero opcional N (positivo o negativo), "
+"especificado el numeral p.e. MO(-2). "
+" También se puede indicar enteros donde 0=MO"
+
+msgctxt "help:recurrence,leapdays:"
+msgid ""
+"Will add given days to the date found if year is a leap"
+" year and the date found is post 28 of february"
+msgstr ""
+"Número de dias a sumar a la fecha si el año es bisiesto"
+" y la fecha es posterior al 28 de febrero"
+
+msgctxt "error:recurrence:"
+msgid "At least one frequency interval must be set."
+msgstr "Por lo menos debe especificar un intervalo de frecuencia"
+
+msgctxt "error:recurrence:"
+msgid "The name of recurrence must be unique."
+msgstr "El nombre de la recurrencia debe ser unico"
+
+msgctxt "error:recurrence:"
+msgid "Invalid \"Weekday\" in recurrence \"%s\""
+msgstr "El campo \"dia de la semana\" de la regla de recurrencia \"%s\" no es correcto."
+
+
+msgctxt "field:recurrence.date,date:"
+msgid "Date"
+msgstr "Fecha"
+
+msgctxt "field:recurrence.date,delta_days:"
+msgid "Delta Days"
+msgstr "Variación dias"
+
+msgctxt "field:recurrence.date,event:"
+msgid "Event"
+msgstr "Acción"
+
+msgctxt "field:recurrence.date,holidays:"
+msgid "Holidays Calendar"
+msgstr "Calendario de festivos"
+
+msgctxt "field:recurrence.date,name:"
+msgid "Name"
+msgstr "Nombre"
+
+msgctxt "field:recurrence.date,trigger:"
+msgid "Trigger"
+msgstr "Disparador"
+
+msgctxt "field:recurrence.date,mo:"
+msgid "Monday"
+msgstr "Lunes"
+
+msgctxt "field:recurrence.date,tu:"
+msgid "Tuesday"
+msgstr "Martes"
+
+msgctxt "field:recurrence.date,we:"
+msgid "Wednesday"
+msgstr "Miércoles"
+
+msgctxt "field:recurrence.date,th:"
+msgid "Thursday"
+msgstr "Jueves"
+
+msgctxt "field:recurrence.date,fr:"
+msgid "Friday"
+msgstr "Viernes"
+
+msgctxt "field:recurrence.date,sa:"
+msgid "Saturday"
+msgstr "Sábado"
+
+msgctxt "field:recurrence.date,su:"
+msgid "Sunday"
+msgstr "Domingo"
+
+msgctxt "error:recurrence.date:"
+msgid "The name of date must be unique."
+msgstr "El nombre de la fecha debe ser unico"
+
+msgctxt "error:recurrence.date:"
+msgid "Can only be one trigger"
+msgstr "Solamente puede haber un disparador"
+
+
+msgctxt "field:recurrence.event,active:"
+msgid "Active"
+msgstr "Activo"
+
+msgctxt "field:recurrence.event,args:"
+msgid "Arguments"
+msgstr "Argumentos"
+
+msgctxt "field:recurrence.event,create_date:"
+msgid "Create Date"
+msgstr "Fecha creación"
+
+msgctxt "field:recurrence.event,create_uid:"
+msgid "Create User"
+msgstr "Usuario creación"
+
+msgctxt "field:recurrence.event,dates:"
+msgid "Dates"
+msgstr "Fechas"
+
+msgctxt "field:recurrence.event,description:"
+msgid "Description"
+msgstr "Descripción"
+
+msgctxt "field:recurrence.event,function:"
+msgid "Function"
+msgstr "Función"
+
+msgctxt "field:recurrence.event,id:"
+msgid "ID"
+msgstr "ID"
+
+msgctxt "field:recurrence.event,model:"
+msgid "Model"
+msgstr "Modelo"
+
+msgctxt "field:recurrence.event,name:"
+msgid "Name"
+msgstr "Nombre"
+
+msgctxt "field:recurrence.event,next_call:"
+msgid "Next Call"
+msgstr "Siguiente llamada"
+
+msgctxt "field:recurrence.event,number_calls:"
+msgid "Number of Calls"
+msgstr "Número de llamadas"
+
+msgctxt "field:recurrence.event,recurrence:"
+msgid "Recurrence"
+msgstr "Recurrencia"
+
+msgctxt "field:recurrence.event,rec_name:"
+msgid "Name"
+msgstr "Nombre"
+
+msgctxt "field:recurrence.event,repeat_missed:"
+msgid "Repeat Missed"
+msgstr "Repetir perdidos"
+
+msgctxt "field:recurrence.event,request_user:"
+msgid "Request User"
+msgstr "Usuario solicitante"
+
+msgctxt "field:recurrence.event,rnext_call:"
+msgid "Recurrence Next Call"
+msgstr "Siguiente llamada de la recurrencia"
+
+msgctxt "field:recurrence.event,trigger_run:"
+msgid "Run Trigger"
+msgstr "Disparador de ejecución"
+
+msgctxt "field:recurrence.event,user:"
+msgid "Execution User"
+msgstr "Usuario para la ejecución"
+
+msgctxt "field:recurrence.event,write_date:"
+msgid "Write Date"
+msgstr "Fecha modificación"
+
+msgctxt "field:recurrence.event,write_uid:"
+msgid "Write User"
+msgstr "Usuario modificación"
+
+msgctxt "help:recurrence.event,number_calls:"
+msgid ""
+"Number of times the function is called, a negative number indicates that the"
+" function will always be called"
+msgstr ""
+"Número de veces que se ejecuta la función, un número negativo indica que "
+"esta función se ejecutará siempre."
+
+msgctxt "help:recurrence.event,request_user:"
+msgid "The user who will receive requests in case of failure"
+msgstr "El usuario que recibirá solicitudes en caso de error."
+
+msgctxt "help:recurrence.event,user:"
+msgid "The user used to execute this action"
+msgstr "El usuario que ejecutará esta acción."
+
+msgctxt "view:recurrence.event:"
+msgid "Run Once"
+msgstr "Ejecutar una vez"
+
+msgctxt "error:recurrence.event:"
+msgid "Scheduled action failed"
+msgstr "La acción planificada ha fallado."
+
+msgctxt "error:recurrence.event:"
+msgid ""
+"The following action failed to execute properly: \"%s\"\n"
+"%s\n"
+" Traceback: \n"
+"\n"
+"%s\n"
+msgstr ""
+"Ha fallado la acción cuando se ejecutaba: \"%s\"\n"
+"%s\n"
+" Traza del programa: \n"
+"\n"
+"%s\n"
+
+
+msgctxt "model:ir.ui.menu,name:menu_recurrence"
+msgid "Recurrence"
+msgstr "Recurrencias"
+
+msgctxt "model:ir.ui.menu,name:menu_recurrence_tree"
+msgid "Recurrences"
+msgstr "Recurrencias"
+
+msgctxt "model:ir.ui.menu,name:menu_revent_tree"
+msgid "Scheduled Actions"
+msgstr "Acciones Planificadas"
+
+
+msgctxt "model:ir.action,name:act_recurrence"
+msgid "Recurrences"
+msgstr "Recurrencias"
+
+msgctxt "model:ir.action,name:act_recurrence_event"
+msgid "Scheduled Actions"
+msgstr "Acciones planificadas"
+
+
+msgctxt "view:recurrence.date:"
+msgid "Recurrence Dates"
+msgstr "Fechas de recurrencia"
+
+msgctxt "view:recurrence.date:"
+msgid "Excluded weekdays"
+msgstr "Dias semana excluidos"
+
+msgctxt "view:recurrence.event:"
+msgid "Scheduled Action"
+msgstr "Acción planificada"
+
+msgctxt "view:recurrence.event:"
+msgid "Dates"
+msgstr "Fechas"
+
+msgctxt "view:recurrence.event:"
+msgid "Action"
+msgstr "Acción"
+
+msgctxt "view:recurrence.event:"
+msgid "Description"
+msgstr "Descripción"
+
+
+msgctxt "view:recurrence:"
+msgid "Recurrence"
+msgstr "Recurrencia"
+
+msgctxt "view:recurrence:"
+msgid "Delta Time"
+msgstr "Variación temporal relativa"
+

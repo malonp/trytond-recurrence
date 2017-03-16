@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!-- This file is part of Tryton.  The COPYRIGHT file at the top level of
+this repository contains the full copyright notices and license terms. -->
+<tryton>
+    <data>
+        <record model="ir.action.report" id="recurrences_list">
+            <field name="name">Event List</field>
+            <field name="model"></field>
+            <field name="report_name">recurrence.events_list</field>
+            <field name="report">recurrence/report/calendar.ods</field>
+            <field name="template_extension">ods</field>
+        </record>
+
+        <record model="ir.action.keyword" id="recurrences_list_print">
+            <field name="keyword">form_print</field>
+            <field name="model">recurrence.event,-1</field>
+            <field name="action" ref="recurrences_list"/>
+        </record>
+    </data>
+</tryton>

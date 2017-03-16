@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<!-- This file is part of Tryton.  The COPYRIGHT file at the top level of
+this repository contains the full copyright notices and license terms. -->
+<form string="Scheduled Action">
+    <label name="name"/>
+    <field name="name"/>
+    <label name="active"/>
+    <field name="active"/>
+
+    <label name="user"/>
+    <field name="user"/>
+    <label name="request_user"/>
+    <field name="request_user"/>
+
+    <label name="number_calls"/>
+    <field name="number_calls"/>
+    <label name="recurrence"/>
+    <field name="recurrence"/>
+
+    <label name="repeat_missed"/>
+    <field name="repeat_missed"/>
+<!-- Invisible field for on_change_recurrence method work -->
+    <label name="rnext_call"/>
+    <field name="rnext_call" readonly="1"/>
+
+    <notebook colspan="4">
+        <page string="Dates" id="event_dates">
+            <field name="dates" colspan="4" widget="one2many"/>
+        </page>
+
+        <page string="Action" id="event_function">
+            <label name="model"/>
+            <field name="model"/>
+            <label name="function"/>
+            <field name="function"/>
+            <label name="args"/>
+            <field name="args" colspan="3" widget="char"/>
+            <button name="run_once" colspan="4" string="Run Once"/>
+        </page>
+
+        <page string="Description" id="event_description">
+            <field name="description" colspan="4"/>
+        </page>
+    </notebook>
+
+</form>

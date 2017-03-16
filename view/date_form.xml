@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!-- This file is part of Tryton.  The COPYRIGHT file at the top level of
+this repository contains the full copyright notices and license terms. -->
+<form string="Recurrence Dates" col="4">
+    <label name="name"/>
+    <field name="name"/>
+    <label name="trigger"/>
+    <field name="trigger"/>
+
+    <label name="holidays"/>
+    <field name="holidays"/>
+    <label name="delta_days"/>
+    <field name="delta_days"/>
+    <newline/>
+
+    <group homogeneous="1" colspan="4" string="Excluded weekdays" col="2" id="byweekday">
+        <label name="mo"/>
+        <field name="mo"/>
+
+        <label name="tu"/>
+        <field name="tu"/>
+
+        <label name="we"/>
+        <field name="we"/>
+
+        <label name="th"/>
+        <field name="th"/>
+
+        <label name="fr"/>
+        <field name="fr"/>
+
+        <label name="sa"/>
+        <field name="sa"/>
+
+        <label name="su"/>
+        <field name="su"/>
+    </group>
+
+</form>
