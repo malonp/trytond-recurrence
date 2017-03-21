@@ -198,11 +198,11 @@ class RecurrenceDate(ModelSQL, ModelView):
 
     name = fields.Char('Name', select=True)
     event = fields.Many2One('recurrence.event', 'Event',
-            required=True, select=True, ondelete="CASCADE")
+            required=True, select=True, ondelete='CASCADE')
     delta_days = fields.Integer('Delta Days',
         required=True, select=True)
     holidays = fields.Many2One('holidays.calendar', 'Holidays Calendar',
-        select=True, ondelete="SET NULL")
+        select=True, ondelete='SET NULL')
     trigger = fields.Boolean('Trigger', select=True)
     date = fields.Function(fields.DateTime('Date'),
         getter='get_date')
@@ -324,7 +324,7 @@ class RecurrenceEvent(ModelSQL, ModelView):
     name = fields.Char('Name', required=True)
     description = fields.Text('Description')
     recurrence = fields.Many2One('recurrence', 'Recurrence',
-            required=True, select=True, ondelete="CASCADE")
+            required=True, select=True, ondelete='CASCADE')
     dates = fields.One2Many('recurrence.date', 'event', 'Dates')
     user = fields.Many2One('res.user', 'Execution User', required=True,
         domain=[('active', '=', False)],
