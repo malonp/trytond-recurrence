@@ -28,8 +28,8 @@ from .report import *
 def register():
     Pool.register(
         Recurrence,
-        RecurrenceDate,
         RecurrenceEvent,
+        RecurrenceDate,
         module='recurrence', type_='model')
     Pool.register(
         EventsList,
