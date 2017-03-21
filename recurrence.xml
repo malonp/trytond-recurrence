@@ -89,7 +89,7 @@ this repository contains the full copyright notices and license terms. -->
         </record>
 
 <!-- Initial Menu -->
-        <menuitem name="Recurrence" sequence="9" id="menu_recurrence" icon="datecalendar"/>
+        <menuitem name="Scheduled Actions" sequence="9" id="menu_recurrence" icon="datecalendar"/>
 
         <menuitem parent="menu_recurrence" action="act_recurrence"
             id="menu_recurrence_tree" sequence="0" icon="clock"/>

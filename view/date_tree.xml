@@ -6,4 +6,6 @@ this repository contains the full copyright notices and license terms. -->
     <field name="delta_days"/>
     <field name="holidays"/>
     <field name="trigger"/>
+    <field name="date" widget="date"/>
+    <field name="date" widget="time"/>
 </tree>

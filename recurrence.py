@@ -20,8 +20,9 @@
 ##############################################################################
 
 import datetime
-from dateutil.relativedelta import relativedelta, weekdays
 from dateutil import rrule
+from dateutil.relativedelta import relativedelta, weekdays
+
 import traceback
 import sys
 import logging

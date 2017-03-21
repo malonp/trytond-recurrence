@@ -268,8 +268,8 @@ msgstr ""
 
 
 msgctxt "model:ir.ui.menu,name:menu_recurrence"
-msgid "Recurrence"
-msgstr "Recurrencias"
+msgid "Scheduled Actions"
+msgstr "Acciones Planificadas"
 
 msgctxt "model:ir.ui.menu,name:menu_recurrence_tree"
 msgid "Recurrences"
