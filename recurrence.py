@@ -19,6 +19,7 @@
 #
 ##############################################################################
 
+
 import datetime
 from dateutil import rrule
 from dateutil.relativedelta import relativedelta, weekdays
@@ -76,6 +77,12 @@ class Recurrence(ModelSQL, ModelView):
             required=True, select=True)
     next_call = fields.Function(fields.DateTime('Next Call'),
         getter='get_next_call')
+    direction = fields.Selection([
+            ('after', 'After'),
+            ('before', 'Before'),
+            ], 'Direction',
+            required=True, help=('Movement direction in time to find '
+                'recurrence date when loop fall into excluded date'))
     events = fields.One2Many('recurrence.event', 'recurrence', 'Events')
 
     @classmethod
@@ -115,6 +122,10 @@ class Recurrence(ModelSQL, ModelView):
     @staticmethod
     def default_active():
         return True
+
+    @staticmethod
+    def default_direction():
+        return 'after'
 
     @classmethod
     def validate(cls, recurrences):
@@ -295,13 +306,47 @@ class RecurrenceDate(ModelSQL, ModelView):
         i = abs(self.delta_days)
         incr = cmp(self.delta_days,0)
 
-        dtnx = getattr(rs, type)(dt.replace(hour=0, minute=0, second=0), inc=True)
+        #find first date on direction time specified by recurrence
+        dtnx = getattr(rs, self.event.recurrence.direction)(dt.replace(hour=0, minute=0, second=0), inc=True)
+
+        #now got forward or backwards on time depending on self.delta_days
         while i and dtnx:
             dtnx += datetime.timedelta(days=incr)
             dtnx = getattr(rs, type)(dtnx, inc=True)
             i -= 1
 
         return dtnx.replace(hour=dt.hour, minute=dt.minute, second=dt.second)
+
+    def update_event_rnext_call(self):
+        event = self.event
+        recurrence = event.recurrence
+
+        now = datetime.datetime.now()
+
+        # if event next_call points to past
+        if event.next_call < now or event.rnext_call != recurrence.next_call:
+            dt, n = recurrence.dtstart, 1
+
+            #forward dt until is equal to recurrence next_call
+            while dt < min(event.rnext_call, recurrence.next_call):
+                dt = recurrence.dtstart + recurrence.get_delta(n=n)
+                n += 1
+
+            #while next_call lower than now
+            while self.get_date('date', dt=dt) < now:
+                dt = recurrence.dtstart + recurrence.get_delta(n=n)
+                n += 1
+
+            # save event if rnext_call field changed
+            if event.rnext_call != dt:
+                events = Pool().get('recurrence.event').__table__()
+                cursor = Transaction().cursor
+
+                cursor.execute(*events.update(
+                    columns=[events.rnext_call],
+                    values=[dt],
+                    where=(events.id==event.id)))
+        return
 
     @classmethod
     def validate(cls, dates):
@@ -315,6 +360,28 @@ class RecurrenceDate(ModelSQL, ModelView):
             if triggers>1:
                 self.raise_user_error(
                     "Can only be one trigger")
+
+    @classmethod
+    def create(cls, vlist):
+        recurdates = super(RecurrenceDate, cls).create(vlist)
+
+        for recurdate in recurdates:
+            if recurdate.trigger:
+                # Set next_call after now
+                recurdate.update_event_rnext_call()
+        return recurdates
+
+    @classmethod
+    def write(cls, recurdates, values, *args):
+
+        super(RecurrenceDate, cls).write(recurdates, values, *args)
+
+        actions = iter((recurdates, values) + args)
+        for records, values in zip(actions, actions):
+            for r in records:
+                if r.trigger:
+                    #TODO: why is called two times when writing one record?
+                    r.update_event_rnext_call()
 
 
 class RecurrenceEvent(ModelSQL, ModelView):
@@ -485,4 +552,4 @@ class RecurrenceEvent(ModelSQL, ModelView):
                     event.active = False
                 event.save()
             except Exception:
-                logger.error('Running recurrence event %s', event.id, exc_info=True)
+                logger.error('Running recurrence event %s: %s', event.id, event.name, exc_info=True)

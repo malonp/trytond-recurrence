@@ -11,6 +11,8 @@ this repository contains the full copyright notices and license terms. -->
     <field name="dtstart"/>
     <label name="next_call"/>
     <field name="next_call" readonly="1"/>
+    <label name="direction"/>
+    <field name="direction"/>
 
     <group homogeneous="1" colspan="4" string="Delta Time" col="8" id="timedelta">
         <label name="years"/>

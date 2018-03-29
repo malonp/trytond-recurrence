@@ -1,4 +1,4 @@
-# 
+#
 msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\n"
 
@@ -13,6 +13,10 @@ msgstr "Días"
 msgctxt "field:recurrence,description:"
 msgid "Description"
 msgstr "Descripción"
+
+msgctxt "field:recurrence,direction:"
+msgid "Direction"
+msgstr "Dirección"
 
 msgctxt "field:recurrence,dtstart:"
 msgid "Start"
@@ -50,6 +54,14 @@ msgctxt "field:recurrence,years:"
 msgid "Years"
 msgstr "Años"
 
+msgctxt "selection:recurrence,direction:"
+msgid "After"
+msgstr "Posterior"
+
+msgctxt "selection:recurrence,direction:"
+msgid "Before"
+msgstr "Anterior"
+
 msgctxt "help:recurrence,weekday:"
 msgid ""
 "One of the weekday instances (MO, TU, etc) "
@@ -69,6 +81,14 @@ msgid ""
 msgstr ""
 "Número de dias a sumar a la fecha si el año es bisiesto"
 " y la fecha es posterior al 28 de febrero"
+
+msgctxt "help:recurrence,direction:"
+msgid ""
+"Movement direction in time to find "
+"recurrence date when loop fall into excluded date"
+msgstr ""
+"Sentido del movimiento temporal para determinar la fecha"
+" cuando el bucle resulta en una fecha excluida"
 
 msgctxt "error:recurrence:"
 msgid "At least one frequency interval must be set."
