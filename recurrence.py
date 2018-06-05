@@ -268,7 +268,7 @@ class RecurrenceDate(ModelSQL, ModelView):
 
     def get_date(self, name, dtstart=None, dtuntil=None, dt=None):
         if not dt:
-            dt = self.event.rnext_call
+            dt = self.event.rnext_call if self.event.rnext_call else self.event.recurrence.next_call
 
         if not dtstart:
             dtstart = max(dt - self.event.recurrence.get_delta(n=2),\
@@ -328,7 +328,7 @@ class RecurrenceDate(ModelSQL, ModelView):
             dt, n = recurrence.dtstart, 1
 
             #forward dt until is equal to recurrence next_call
-            while dt < min(event.rnext_call, recurrence.next_call):
+            while dt < min(event.rnext_call or recurrence.next_call, recurrence.next_call):
                 dt = recurrence.dtstart + recurrence.get_delta(n=n)
                 n += 1
 
