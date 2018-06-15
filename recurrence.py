@@ -19,7 +19,6 @@
 #
 ##############################################################################
 
-
 import datetime
 from dateutil import rrule
 from dateutil.relativedelta import relativedelta, weekdays
@@ -178,7 +177,7 @@ class Recurrence(ModelSQL, ModelView):
     def write(cls, recurrences, values, *args):
 
         events = Pool().get('recurrence.event').__table__()
-        cursor = Transaction().cursor
+        cursor = Transaction().connection.cursor()
 
         kwrd = {}
         actions = iter((recurrences, values) + args)
@@ -304,7 +303,7 @@ class RecurrenceDate(ModelSQL, ModelView):
 
         type = 'after' if self.delta_days>=0 else 'before'
         i = abs(self.delta_days)
-        incr = cmp(self.delta_days,0)
+        incr = (self.delta_days > 0) - (self.delta_days < 0)
 
         #find first date on direction time specified by recurrence
         dtnx = getattr(rs, self.event.recurrence.direction)(dt.replace(hour=0, minute=0, second=0), inc=True)
@@ -340,7 +339,7 @@ class RecurrenceDate(ModelSQL, ModelView):
             # save event if rnext_call field changed
             if event.rnext_call != dt:
                 events = Pool().get('recurrence.event').__table__()
-                cursor = Transaction().cursor
+                cursor = Transaction().connection.cursor()
 
                 cursor.execute(*events.update(
                     columns=[events.rnext_call],
