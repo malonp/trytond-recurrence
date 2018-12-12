@@ -34,7 +34,7 @@ from ast import literal_eval
 from sql import Null
 
 from trytond.config import config
-from trytond.model import ModelSQL, ModelView, fields, dualmethod, Check, Unique
+from trytond.model import DeactivableMixin, ModelSQL, ModelView, fields, dualmethod, Check, Unique
 from trytond.pool import Pool
 from trytond.tools import get_smtp_server, reduce_ids, grouped_slice
 from trytond.transaction import Transaction
@@ -50,13 +50,12 @@ __all__ = ['Recurrence',
 logger = logging.getLogger(__name__)
 
 
-class Recurrence(ModelSQL, ModelView):
+class Recurrence(DeactivableMixin, ModelSQL, ModelView):
     'Recurrence Rule'
     __name__ = 'recurrence'
 
     name = fields.Char('Name', required=True)
     description = fields.Text('Description')
-    active = fields.Boolean('Active', select=True)
 
     years = fields.Integer('Years')
     months = fields.Integer('Months')
@@ -117,10 +116,6 @@ class Recurrence(ModelSQL, ModelView):
     @staticmethod
     def default_dtstart():
         return datetime.datetime.now()
-
-    @staticmethod
-    def default_active():
-        return True
 
     @staticmethod
     def default_direction():
@@ -383,7 +378,7 @@ class RecurrenceDate(ModelSQL, ModelView):
                     r.update_event_rnext_call()
 
 
-class RecurrenceEvent(ModelSQL, ModelView):
+class RecurrenceEvent(DeactivableMixin, ModelSQL, ModelView):
     'Scheduled Actions'
     __name__ = 'recurrence.event'
 
@@ -398,7 +393,6 @@ class RecurrenceEvent(ModelSQL, ModelView):
     request_user = fields.Many2One(
         'res.user', 'Request User', required=True,
         help="The user who will receive requests in case of failure")
-    active = fields.Boolean('Active', select=True)
     number_calls = fields.Integer('Number of Calls', select=1, required=True,
         help=('Number of times the function is called, a negative '
             'number indicates that the function will always be '
@@ -431,10 +425,6 @@ class RecurrenceEvent(ModelSQL, ModelView):
                     'icon': 'tryton-executable',
                     },
                 })
-
-    @staticmethod
-    def default_active():
-        return True
 
     @staticmethod
     def default_number_calls():
