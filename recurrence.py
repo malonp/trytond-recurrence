@@ -36,7 +36,8 @@ from sql import Null
 from trytond.config import config
 from trytond.model import DeactivableMixin, ModelSQL, ModelView, fields, dualmethod, Check, Unique
 from trytond.pool import Pool
-from trytond.tools import get_smtp_server, reduce_ids, grouped_slice
+from trytond.sendmail import sendmail
+from trytond.tools import reduce_ids, grouped_slice
 from trytond.transaction import Transaction
 
 from trytond.modules.holidays.calendar import handle_byweekday_item as handle_weekday
@@ -460,7 +461,9 @@ class RecurrenceEvent(DeactivableMixin, ModelSQL, ModelView):
     @classmethod
     def send_error_message(cls, cron):
         tb_s = ''.join(traceback.format_exception(*sys.exc_info()))
-        tb_s = tb_s.decode('utf-8', 'ignore')
+        # On Python3, the traceback is already a unicode
+        if hasattr(tb_s, 'decode'):
+            tb_s = tb_s.decode('utf-8', 'ignore')
         subject = cls.raise_user_error('request_title',
             raise_exception=False)
         body = cls.raise_user_error('request_body',
@@ -477,13 +480,7 @@ class RecurrenceEvent(DeactivableMixin, ModelSQL, ModelView):
         if not to_addr:
             logger.error(msg.as_string())
         else:
-            try:
-                server = get_smtp_server()
-                server.sendmail(from_addr, to_addr, msg.as_string())
-                server.quit()
-            except Exception:
-                logger.error('Unable to deliver email:\n %s',
-                    msg.as_string(), exc_info=True)
+            sendmail(from_addr, to_addr, msg)
 
     @dualmethod
     @ModelView.button
