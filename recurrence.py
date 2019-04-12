@@ -423,7 +423,7 @@ class RecurrenceEvent(DeactivableMixin, ModelSQL, ModelView):
                 })
         cls._buttons.update({
                 'run_once': {
-                    'icon': 'tryton-executable',
+                    'icon': 'tryton-launch',
                     },
                 })
 
