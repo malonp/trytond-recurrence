@@ -26,5 +26,5 @@ from .report import *
 
 
 def register():
-    Pool.register(Recurrence, RecurrenceEvent, RecurrenceDate, module='recurrence', type_='model')
+    Pool.register(Recurrence, RecurrenceDate, RecurrenceEvent, module='recurrence', type_='model')
     Pool.register(EventsList, module='recurrence', type_='report')
