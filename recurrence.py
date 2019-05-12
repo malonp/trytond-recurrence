@@ -34,54 +34,57 @@ from ast import literal_eval
 from sql import Null
 
 from trytond.config import config
-from trytond.model import ModelSQL, ModelView, fields, dualmethod, Check, Unique
+from trytond.model import DeactivableMixin, ModelSQL, ModelView, fields, dualmethod, Check, Unique
 from trytond.pool import Pool
-from trytond.tools import get_smtp_server, reduce_ids, grouped_slice
+from trytond.sendmail import sendmail
+from trytond.tools import reduce_ids, grouped_slice
 from trytond.transaction import Transaction
 
 from trytond.modules.holidays.calendar import handle_byweekday_item as handle_weekday
 from trytond.modules.holidays.calendar import _weekday_map
 
 
-__all__ = ['Recurrence',
-            'RecurrenceDate', 'RecurrenceEvent'
-            ]
+__all__ = ['Recurrence', 'RecurrenceDate', 'RecurrenceEvent']
 
 logger = logging.getLogger(__name__)
 
 
-class Recurrence(ModelSQL, ModelView):
+class Recurrence(DeactivableMixin, ModelSQL, ModelView):
     'Recurrence Rule'
     __name__ = 'recurrence'
 
     name = fields.Char('Name', required=True)
     description = fields.Text('Description')
-    active = fields.Boolean('Active', select=True)
 
     years = fields.Integer('Years')
     months = fields.Integer('Months')
     weeks = fields.Integer('Weeks')
     days = fields.Integer('Days')
 
-    weekday = fields.Char('Weekday',
-        help=('One of the weekday instances (MO, TU, etc) '
+    weekday = fields.Char(
+        'Weekday',
+        help=(
+            'One of the weekday instances (MO, TU, etc) '
             'and an optional parameter N (positive or negative), '
             'specifying the Nth weekday like MO(-2).'
-            ' You can also use an integer where 0=MO'))
-    leapdays = fields.Integer('Leapdays',
-        help=('Will add given days to the date found if year is a leap'
-            ' year and the date found is post 28 of february'))
+            ' You can also use an integer where 0=MO'
+        ),
+    )
+    leapdays = fields.Integer(
+        'Leapdays',
+        help=(
+            'Will add given days to the date found if year is a leap' ' year and the date found is post 28 of february'
+        ),
+    )
 
-    dtstart = fields.DateTime('Start',
-            required=True, select=True)
-    next_call = fields.Function(fields.DateTime('Next Call'),
-        getter='get_next_call')
-    direction = fields.Selection([
-            ('after', 'After'),
-            ('before', 'Before'),
-            ], 'Direction',
-            required=True, help=('Movement direction in time to find '
-                'recurrence date when loop fall into excluded date'))
+    dtstart = fields.DateTime('Start', required=True, select=True)
+    next_call = fields.Function(fields.DateTime('Next Call'), getter='get_next_call')
+    direction = fields.Selection(
+        [('after', 'After'), ('before', 'Before')],
+        'Direction',
+        required=True,
+        help=('Movement direction in time to find ' 'recurrence date when loop fall into excluded date'),
+    )
     events = fields.One2Many('recurrence.event', 'recurrence', 'Events')
 
     @classmethod
@@ -89,16 +92,14 @@ class Recurrence(ModelSQL, ModelView):
         super(Recurrence, cls).__setup__()
         t = cls.__table__()
         cls._sql_constraints += [
-            ('at_least_one_interval',
-                Check(t,
-                    (t.years != Null) | (t.months != Null) | (t.weeks != Null) | (t.days != Null)),
-                'At least one frequency interval must be set.'),
-            ('name_uniq', Unique(t, t.name),
-                'The name of recurrence must be unique.'),
-            ]
-        cls._error_messages.update({
-                'invalid_weekday': 'Invalid "Weekday" in recurrence "%s"',
-                })
+            (
+                'at_least_one_interval',
+                Check(t, (t.years != Null) | (t.months != Null) | (t.weeks != Null) | (t.days != Null)),
+                'At least one frequency interval must be set.',
+            ),
+            ('name_uniq', Unique(t, t.name), 'The name of recurrence must be unique.'),
+        ]
+        cls._error_messages.update({'invalid_weekday': 'Invalid "Weekday" in recurrence "%s"'})
 
     def get_next_call(self, name, now=None):
         if not self.active:
@@ -117,10 +118,6 @@ class Recurrence(ModelSQL, ModelView):
     @staticmethod
     def default_dtstart():
         return datetime.datetime.now()
-
-    @staticmethod
-    def default_active():
-        return True
 
     @staticmethod
     def default_direction():
@@ -148,13 +145,12 @@ class Recurrence(ModelSQL, ModelView):
                             n = self.weekday[:i] or None
                             w = self.weekday[i:]
                             break
-                        n = self.weekday[:i+1] or None
+                        n = self.weekday[: i + 1] or None
                     if n:
                         n = int(n)
             except Exception:
                 self.raise_user_error('invalid_weekday', (self.rec_name,))
-            if (w and w.strip() not in ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU']) or \
-                (not w and n and abs(n)>6):
+            if (w and w.strip() not in ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU']) or (not w and n and abs(n) > 6):
                 self.raise_user_error('invalid_weekday', (self.rec_name,))
 
     def get_delta(self, n=1):
@@ -166,12 +162,14 @@ class Recurrence(ModelSQL, ModelView):
         except TypeError:
             return NotImplemented
 
-        return relativedelta(years=self.years * i if self.years else 0,
-                            months=self.months * i if self.months else 0,
-                            weeks=self.weeks * i if self.weeks else 0,
-                            days=self.days * i if self.days else 0,
-                            weekday=handle_weekday(self.weekday),
-                            leapdays=self.leapdays if self.leapdays else 0)
+        return relativedelta(
+            years=self.years * i if self.years else 0,
+            months=self.months * i if self.months else 0,
+            weeks=self.weeks * i if self.weeks else 0,
+            days=self.days * i if self.days else 0,
+            weekday=handle_weekday(self.weekday),
+            leapdays=self.leapdays if self.leapdays else 0,
+        )
 
     @classmethod
     def write(cls, recurrences, values, *args):
@@ -190,16 +188,15 @@ class Recurrence(ModelSQL, ModelView):
         actions = iter((recurrences, values) + args)
         for records, values in zip(actions, actions):
             for r in records:
-                if kwrd[r.id]  != r.next_call:
+                if kwrd[r.id] != r.next_call:
                     ids = [e.id for e in r.events]
 
                     if len(ids):
                         for sub_ids in grouped_slice(ids):
                             red_sql = reduce_ids(events.id, sub_ids)
-                            cursor.execute(*events.update(
-                                    columns=[events.rnext_call],
-                                    values=[r.next_call],
-                                    where=red_sql))
+                            cursor.execute(
+                                *events.update(columns=[events.rnext_call], values=[r.next_call], where=red_sql)
+                            )
 
 
 class RecurrenceDate(ModelSQL, ModelView):
@@ -207,15 +204,11 @@ class RecurrenceDate(ModelSQL, ModelView):
     __name__ = 'recurrence.date'
 
     name = fields.Char('Name', select=True)
-    event = fields.Many2One('recurrence.event', 'Event',
-            required=True, select=True, ondelete='CASCADE')
-    delta_days = fields.Integer('Delta Days',
-        required=True, select=True)
-    holidays = fields.Many2One('holidays.calendar', 'Holidays Calendar',
-        select=True, ondelete='SET NULL')
+    event = fields.Many2One('recurrence.event', 'Event', required=True, select=True, ondelete='CASCADE')
+    delta_days = fields.Integer('Delta Days', required=True, select=True)
+    holidays = fields.Many2One('holidays.calendar', 'Holidays Calendar', select=True, ondelete='SET NULL')
     trigger = fields.Boolean('Trigger', select=True)
-    date = fields.Function(fields.DateTime('Date'),
-        getter='get_date')
+    date = fields.Function(fields.DateTime('Date'), getter='get_date')
     mo = fields.Boolean('Monday')
     tu = fields.Boolean('Tuesday')
     we = fields.Boolean('Wednesday')
@@ -228,10 +221,7 @@ class RecurrenceDate(ModelSQL, ModelView):
     def __setup__(cls):
         super(RecurrenceDate, cls).__setup__()
         t = cls.__table__()
-        cls._sql_constraints += [
-            ('name_uniq', Unique(t, t.name, t.event),
-                'The name of date must be unique.'),
-            ]
+        cls._sql_constraints += [('name_uniq', Unique(t, t.name, t.event), 'The name of date must be unique.')]
 
     @staticmethod
     def default_trigger():
@@ -270,11 +260,9 @@ class RecurrenceDate(ModelSQL, ModelView):
             dt = self.event.rnext_call if self.event.rnext_call else self.event.recurrence.next_call
 
         if not dtstart:
-            dtstart = max(dt - self.event.recurrence.get_delta(n=2),\
-                            self.event.recurrence.dtstart).date()
+            dtstart = max(dt - self.event.recurrence.get_delta(n=2), self.event.recurrence.dtstart).date()
         if not dtuntil:
-            dtuntil = max(datetime.datetime.today(), dt).date() +\
-                            self.event.recurrence.get_delta(n=2)
+            dtuntil = max(datetime.datetime.today(), dt).date() + self.event.recurrence.get_delta(n=2)
 
         byweekday = []
 
@@ -301,14 +289,14 @@ class RecurrenceDate(ModelSQL, ModelView):
         if self.holidays:
             rs.exrule(self.holidays.calendar2alldates(from_date=dtstart, to_date=dtuntil))
 
-        type = 'after' if self.delta_days>=0 else 'before'
+        type = 'after' if self.delta_days >= 0 else 'before'
         i = abs(self.delta_days)
         incr = (self.delta_days > 0) - (self.delta_days < 0)
 
-        #find first date on direction time specified by recurrence
+        # find first date on direction time specified by recurrence
         dtnx = getattr(rs, self.event.recurrence.direction)(dt.replace(hour=0, minute=0, second=0), inc=True)
 
-        #now got forward or backwards on time depending on self.delta_days
+        # now got forward or backwards on time depending on self.delta_days
         while i and dtnx:
             dtnx += datetime.timedelta(days=incr)
             dtnx = getattr(rs, type)(dtnx, inc=True)
@@ -326,12 +314,12 @@ class RecurrenceDate(ModelSQL, ModelView):
         if event.next_call < now or event.rnext_call != recurrence.next_call:
             dt, n = recurrence.dtstart, 1
 
-            #forward dt until is equal to recurrence next_call
+            # forward dt until is equal to recurrence next_call
             while dt < min(event.rnext_call or recurrence.next_call, recurrence.next_call):
                 dt = recurrence.dtstart + recurrence.get_delta(n=n)
                 n += 1
 
-            #while next_call lower than now
+            # while next_call lower than now
             while self.get_date('date', dt=dt) < now:
                 dt = recurrence.dtstart + recurrence.get_delta(n=n)
                 n += 1
@@ -341,10 +329,7 @@ class RecurrenceDate(ModelSQL, ModelView):
                 events = Pool().get('recurrence.event').__table__()
                 cursor = Transaction().connection.cursor()
 
-                cursor.execute(*events.update(
-                    columns=[events.rnext_call],
-                    values=[dt],
-                    where=(events.id==event.id)))
+                cursor.execute(*events.update(columns=[events.rnext_call], values=[dt], where=(events.id == event.id)))
         return
 
     @classmethod
@@ -356,9 +341,8 @@ class RecurrenceDate(ModelSQL, ModelView):
     def check_unique_trigger(self):
         if self.event and self.trigger:
             triggers = sum(1 for d in self.event.dates if d.trigger)
-            if triggers>1:
-                self.raise_user_error(
-                    "Can only be one trigger")
+            if triggers > 1:
+                self.raise_user_error("Can only be one trigger")
 
     @classmethod
     def create(cls, vlist):
@@ -379,62 +363,59 @@ class RecurrenceDate(ModelSQL, ModelView):
         for records, values in zip(actions, actions):
             for r in records:
                 if r.trigger:
-                    #TODO: why is called two times when writing one record?
+                    # TODO: why is called two times when writing one record?
                     r.update_event_rnext_call()
 
 
-class RecurrenceEvent(ModelSQL, ModelView):
+class RecurrenceEvent(DeactivableMixin, ModelSQL, ModelView):
     'Scheduled Actions'
     __name__ = 'recurrence.event'
 
     name = fields.Char('Name', required=True)
     description = fields.Text('Description')
-    recurrence = fields.Many2One('recurrence', 'Recurrence',
-            required=True, select=True, ondelete='CASCADE')
+    recurrence = fields.Many2One('recurrence', 'Recurrence', required=True, select=True, ondelete='CASCADE')
     dates = fields.One2Many('recurrence.date', 'event', 'Dates')
-    user = fields.Many2One('res.user', 'Execution User', required=True,
+    user = fields.Many2One(
+        'res.user',
+        'Execution User',
+        required=True,
         domain=[('active', '=', False)],
-        help="The user used to execute this action")
+        help="The user used to execute this action",
+    )
     request_user = fields.Many2One(
-        'res.user', 'Request User', required=True,
-        help="The user who will receive requests in case of failure")
-    active = fields.Boolean('Active', select=True)
-    number_calls = fields.Integer('Number of Calls', select=1, required=True,
-        help=('Number of times the function is called, a negative '
+        'res.user', 'Request User', required=True, help="The user who will receive requests in case of failure"
+    )
+    number_calls = fields.Integer(
+        'Number of Calls',
+        select=1,
+        required=True,
+        help=(
+            'Number of times the function is called, a negative '
             'number indicates that the function will always be '
-            'called'))
+            'called'
+        ),
+    )
     repeat_missed = fields.Boolean('Repeat Missed')
     model = fields.Char('Model')
     function = fields.Char('Function')
     args = fields.Text('Arguments')
 
-    rnext_call = fields.DateTime('Recurrence Next Call',
-        states={
-            'invisible': True,
-            },
-        depends=['recurrence'])
-    next_call = fields.Function(fields.DateTime('Next Call'),
-        getter='get_next_call')
-    trigger_run = fields.Function(fields.Boolean('Run Trigger'),
-        getter='get_trigger_run')
+    rnext_call = fields.DateTime('Recurrence Next Call', states={'invisible': True}, depends=['recurrence'])
+    next_call = fields.Function(fields.DateTime('Next Call'), getter='get_next_call')
+    trigger_run = fields.Function(fields.Boolean('Run Trigger'), getter='get_trigger_run')
 
     @classmethod
     def __setup__(cls):
         super(RecurrenceEvent, cls).__setup__()
-        cls._error_messages.update({
+        cls._error_messages.update(
+            {
                 'request_title': 'Scheduled action failed',
-                'request_body': ("The following action failed to execute "
-                    "properly: \"%s\"\n%s\n Traceback: \n\n%s\n")
-                })
-        cls._buttons.update({
-                'run_once': {
-                    'icon': 'tryton-executable',
-                    },
-                })
-
-    @staticmethod
-    def default_active():
-        return True
+                'request_body': (
+                    "The following action failed to execute " "properly: \"%s\"\n%s\n Traceback: \n\n%s\n"
+                ),
+            }
+        )
+        cls._buttons.update({'run_once': {'icon': 'tryton-launch'}})
 
     @staticmethod
     def default_number_calls():
@@ -450,7 +431,7 @@ class RecurrenceEvent(ModelSQL, ModelView):
 
     @fields.depends('recurrence')
     def on_change_recurrence(self):
-        #field rnext_call must be included in view
+        # field rnext_call must be included in view
         if self.recurrence:
             self.rnext_call = self.recurrence.next_call
         else:
@@ -458,24 +439,28 @@ class RecurrenceEvent(ModelSQL, ModelView):
 
     @classmethod
     def get_next_call(cls, events, name):
-        return dict([(event.id, next((d.date for d in event.dates if (event.active and d.trigger)),\
-                                None)) for event in events])
+        return dict(
+            [(event.id, next((d.date for d in event.dates if (event.active and d.trigger)), None)) for event in events]
+        )
 
     @classmethod
     def get_trigger_run(cls, events, name):
         now = datetime.datetime.now()
-        return dict([ (e.id, bool(e.recurrence.active and e.number_calls and e.next_call and \
-            e.next_call<=now)) for e in events])
+        return dict(
+            [
+                (e.id, bool(e.recurrence.active and e.number_calls and e.next_call and e.next_call <= now))
+                for e in events
+            ]
+        )
 
     @classmethod
     def send_error_message(cls, cron):
         tb_s = ''.join(traceback.format_exception(*sys.exc_info()))
-        tb_s = tb_s.decode('utf-8', 'ignore')
-        subject = cls.raise_user_error('request_title',
-            raise_exception=False)
-        body = cls.raise_user_error('request_body',
-            (cron.name, cron.__url__, tb_s),
-            raise_exception=False)
+        # On Python3, the traceback is already a unicode
+        if hasattr(tb_s, 'decode'):
+            tb_s = tb_s.decode('utf-8', 'ignore')
+        subject = cls.raise_user_error('request_title', raise_exception=False)
+        body = cls.raise_user_error('request_body', (cron.name, cron.__url__, tb_s), raise_exception=False)
 
         from_addr = config.get('email', 'from')
         to_addr = cron.request_user.email
@@ -487,13 +472,7 @@ class RecurrenceEvent(ModelSQL, ModelView):
         if not to_addr:
             logger.error(msg.as_string())
         else:
-            try:
-                server = get_smtp_server()
-                server.sendmail(from_addr, to_addr, msg.as_string())
-                server.quit()
-            except Exception:
-                logger.error('Unable to deliver email:\n %s',
-                    msg.as_string(), exc_info=True)
+            sendmail(from_addr, to_addr, msg)
 
     @dualmethod
     @ModelView.button
@@ -522,7 +501,7 @@ class RecurrenceEvent(ModelSQL, ModelView):
                 next_call = event.next_call
                 number_calls = event.number_calls
                 first = True
-                trigger_date= next((d for d in event.dates if d.trigger), None)
+                trigger_date = next((d for d in event.dates if d.trigger), None)
 
                 dt, n = recurrence.dtstart, 1
                 while dt <= event.rnext_call:

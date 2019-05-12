@@ -39,18 +39,19 @@ class EventsList(Report):
         ocurrences = {}
 
         for event in records:
-            from_date = max(datetime.datetime.today() - event.recurrence.get_delta(n=2),\
-                            event.recurrence.dtstart)
-            to_date = datetime.date.today() + event.recurrence.get_delta(n=2) +\
-                            relativedelta.relativedelta(years=1)
+            from_date = max(datetime.datetime.today() - event.recurrence.get_delta(n=2), event.recurrence.dtstart)
+            to_date = datetime.date.today() + event.recurrence.get_delta(n=2) + relativedelta.relativedelta(years=1)
 
-            for date in filter(lambda x:x.trigger, event.dates):
+            for date in filter(lambda x: x.trigger, event.dates):
                 rnext_call = event.recurrence.get_next_call('next_call', now=from_date)
                 next_call = date.get_date('date', dt=rnext_call)
                 while next_call.date() < to_date:
-                    ocurrences[next_call.date()] = [(d.name, d.get_date('date',dt=rnext_call).date()) for d in event.dates if not d.trigger]
-                    rnext_call = event.recurrence.get_next_call('next_call',\
-                        now=rnext_call+relativedelta.relativedelta(days=1))
+                    ocurrences[next_call.date()] = [
+                        (d.name, d.get_date('date', dt=rnext_call).date()) for d in event.dates if not d.trigger
+                    ]
+                    rnext_call = event.recurrence.get_next_call(
+                        'next_call', now=rnext_call + relativedelta.relativedelta(days=1)
+                    )
                     next_call = date.get_date('date', dt=rnext_call)
 
         report_context['ocurrences'] = ocurrences
