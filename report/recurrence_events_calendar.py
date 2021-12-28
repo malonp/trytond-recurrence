@@ -20,11 +20,10 @@
 ##############################################################################
 
 
-from trytond.report import Report
-
 import datetime
-from dateutil import relativedelta
 
+from dateutil import relativedelta
+from trytond.report import Report
 
 __all__ = ['EventsList']
 

@@ -20,29 +20,32 @@
 ##############################################################################
 
 import datetime
+import logging
+import sys
+import traceback
+from ast import literal_eval
+from email.header import Header
+from email.mime.text import MIMEText
+
 from dateutil import rrule
 from dateutil.relativedelta import relativedelta, weekdays
-
-import traceback
-import sys
-import logging
-
-from email.mime.text import MIMEText
-from email.header import Header
-from ast import literal_eval
-
 from sql import Null
-
 from trytond.config import config
-from trytond.model import DeactivableMixin, ModelSQL, ModelView, fields, dualmethod, Check, Unique
+from trytond.model import (
+    Check,
+    DeactivableMixin,
+    ModelSQL,
+    ModelView,
+    Unique,
+    dualmethod,
+    fields,
+)
+from trytond.modules.holidays.calendar import _weekday_map
+from trytond.modules.holidays.calendar import handle_byweekday_item as handle_weekday
 from trytond.pool import Pool
 from trytond.sendmail import sendmail
-from trytond.tools import reduce_ids, grouped_slice
+from trytond.tools import grouped_slice, reduce_ids
 from trytond.transaction import Transaction
-
-from trytond.modules.holidays.calendar import handle_byweekday_item as handle_weekday
-from trytond.modules.holidays.calendar import _weekday_map
-
 
 __all__ = ['Recurrence', 'RecurrenceDate', 'RecurrenceEvent']
 
