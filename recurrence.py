@@ -28,7 +28,7 @@ from email.header import Header
 from email.mime.text import MIMEText
 
 from dateutil import rrule
-from dateutil.relativedelta import relativedelta, weekdays
+from dateutil.relativedelta import relativedelta
 from sql import Null
 from trytond.config import config
 from trytond.model import (
@@ -40,7 +40,6 @@ from trytond.model import (
     dualmethod,
     fields,
 )
-from trytond.modules.holidays.calendar import _weekday_map
 from trytond.modules.holidays.calendar import handle_byweekday_item as handle_weekday
 from trytond.pool import Pool
 from trytond.sendmail import sendmail
